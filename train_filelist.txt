@@ -1,0 +1,3 @@
+wav_path	text	speaker	gold_emotion	pred_emotion	confidence
+/Users/peteryoussef/Development/Projects/yourtts_full/wavs/ana-ghadban.wav	أنا غضبان	peter	angry	angry	1.0
+/Users/peteryoussef/Development/Projects/yourtts_full/wavs/ana-mabtahi.wav	أنا مبتهج	peter	happy	happy	1.0
