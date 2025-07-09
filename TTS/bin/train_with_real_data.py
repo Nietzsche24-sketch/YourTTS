@@ -1,37 +1,30 @@
-import torch
-import torchaudio
+import os
 import json
-from TTS.vits.yourtts import YourTTS
-from TTS.configs.shared_configs import YourTTSConfig
+from types import SimpleNamespace
+from TTS.trainers.vits_trainer import VitsTrainer
 
-# Path setup
-wav_path = "wavs/ana-ghadban.wav"
-json_path = "emotion_vectors/ana-ghadban.json"
-text = ["أنا غضبان"]  # Egyptian Arabic
+# Load JSON config and convert to an object
+with open("config/your_config.json", "r", encoding="utf-8") as f:
+    config_dict = json.load(f)
+config = SimpleNamespace(**config_dict)
 
-# Load audio
-wav_tensor, sr = torchaudio.load(wav_path)
-wav_tensor = wav_tensor.to(torch.float32).to("cpu")
+# Fallback: manually nest tokenizer_config if needed
+if "tokenizer_config" not in config_dict:
+    config.tokenizer_config = SimpleNamespace(characters=config_dict.get("characters", []))
 
-# Load emotion vector
-with open(json_path) as f:
-    emotion_vec = torch.tensor(json.load(f)).unsqueeze(0).to(torch.float32)
+# Dummy args
+args = SimpleNamespace()
+args.restore_path = None
+args.continue_path = None
 
-# Load config and model
-config = YourTTSConfig()
-model = YourTTS(config)
-model.to("cpu")
+# Output directory
+output_path = os.path.abspath("training_output")
 
-# Forward
-output = model(wav_tensor, text, emotion_vec)
-output = torch.nn.functional.pad(output, (0, 80000 - output.shape[-1]))
-target = torch.zeros_like(output)
-loss = torch.nn.functional.mse_loss(output, target)
-print("✅ Loss computed successfully:", loss.item())
-print("✅ Success: Forward pass with real WAV + emotion vector")
+# Train
+import sys
+sys.stdout = open("training_output/train.log", "w", encoding="utf-8")
+sys.stderr = sys.stdout
 
-# ===== FINAL PATCH: PADDING + LOSS COMPUTATION =====
-output = torch.nn.functional.pad(output, (0, 80000 - output.shape[-1]))
-target = torch.zeros_like(output)
-loss = torch.nn.functional.mse_loss(output, target)
-print("✅ Loss computed successfully:", loss.item())
+if __name__ == "__main__":
+    trainer = VitsTrainer(config, args, output_path)
+    trainer.fit()

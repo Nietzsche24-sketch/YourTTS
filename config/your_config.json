@@ -1,0 +1,39 @@
+{
+  "model_name": "yourtts-lite",
+  "batch_size": 2,
+  "eval_batch_size": 2,
+  "num_loader_workers": 0,
+  "output_path": "output/",
+  "tokenizer_config": {
+    "characters": [
+      "ا",
+      "ن",
+      "غ",
+      "ض",
+      "ب",
+      "ه",
+      "ح",
+      "ت",
+      "م",
+      "ي",
+      "ج",
+      "ف",
+      "ق",
+      "س",
+      "ل",
+      "ر",
+      "ك",
+      "ش",
+      "ز",
+      "د",
+      "ة",
+      "ى",
+      "ؤ",
+      "ء",
+      "أ",
+      "إ",
+      "ئ",
+      "و"
+    ]
+  }
+}
